@@ -1,5 +1,6 @@
 const HttpError = require('../utils/HttpError');
 const categoryRepository = require('../repositories/categoryRepository');
+const eventRepository = require('../repositories/eventRepository');
 
 function createSlug(text) {
   return text
@@ -63,6 +64,11 @@ async function updateCategory(id, updates) {
 }
 
 async function deleteCategory(id) {
+  const associatedEvents = await eventRepository.countByCategory(id);
+  if (associatedEvents > 0) {
+    throw new HttpError(409, 'No se puede eliminar una categoria con eventos asociados');
+  }
+
   const deleted = await categoryRepository.deleteById(id);
   if (!deleted) {
     throw new HttpError(404, 'Categoria no encontrada');
