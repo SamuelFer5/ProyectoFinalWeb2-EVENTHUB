@@ -30,7 +30,7 @@ function listActiveByUser(userId) {
 }
 
 function revokeById(sessionId) {
-  return Session.findByIdAndUpdate(sessionId, { revokedAt: new Date() }, { new: true });
+  return Session.findByIdAndUpdate(sessionId, { revokedAt: new Date() }, { returnDocument: 'after' });
 }
 
 function revokeAllByUser(userId) {

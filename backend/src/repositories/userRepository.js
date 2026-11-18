@@ -35,7 +35,7 @@ function findByPasswordResetTokenHash(tokenHash) {
 }
 
 function updateById(id, updates) {
-  return User.findByIdAndUpdate(id, updates, { new: true, runValidators: true });
+  return User.findByIdAndUpdate(id, updates, { returnDocument: 'after', runValidators: true });
 }
 
 async function listUsers({ filter = {}, skip = 0, limit = 10, sort = { createdAt: -1 } }) {

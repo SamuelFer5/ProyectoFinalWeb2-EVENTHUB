@@ -11,7 +11,7 @@ function signAccessToken(user) {
       type: 'access',
     },
     env.jwt.accessSecret,
-    { expiresIn: env.jwt.accessExpiresIn }
+    { expiresIn: env.jwt.accessExpiresIn, jwtid: crypto.randomUUID() }
   );
 }
 
@@ -23,7 +23,7 @@ function signRefreshToken(userId, sessionId) {
       type: 'refresh',
     },
     env.jwt.refreshSecret,
-    { expiresIn: `${env.jwt.refreshExpiresDays}d` }
+    { expiresIn: `${env.jwt.refreshExpiresDays}d`, jwtid: crypto.randomUUID() }
   );
 }
 

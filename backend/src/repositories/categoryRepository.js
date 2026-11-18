@@ -23,7 +23,7 @@ function listCategories(filter = {}) {
 }
 
 function updateById(id, updates) {
-  return Category.findByIdAndUpdate(id, updates, { new: true, runValidators: true });
+  return Category.findByIdAndUpdate(id, updates, { returnDocument: 'after', runValidators: true });
 }
 
 function deleteById(id) {

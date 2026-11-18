@@ -1,8 +1,10 @@
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
+const swaggerUi = require('swagger-ui-express');
 const { env } = require('./config/env');
 const HttpError = require('./utils/HttpError');
+const openapiSpec = require('./docs/openapi');
 const requestLogger = require('./middlewares/requestLogger');
 const { apiLimiter } = require('./middlewares/rateLimiter');
 const { notFound, errorHandler } = require('./middlewares/errorHandler');
@@ -17,7 +19,7 @@ if (env.isProduction) {
   app.set('trust proxy', 1);
 }
 
-app.use(helmet());
+app.use(helmet({ contentSecurityPolicy: false }));
 app.use(
   cors({
     origin(origin, callback) {
@@ -32,6 +34,30 @@ app.use(
 app.use(express.json({ limit: '1mb' }));
 app.use(requestLogger);
 app.use('/api', apiLimiter);
+
+app.get('/openapi.json', (req, res) => {
+  res.json(openapiSpec);
+});
+
+// Scalar distribuye un modulo ESM que el cargador CJS de Jest no importa con require.
+if (!env.isTest) {
+  const { apiReference } = require('@scalar/express-api-reference');
+  app.use(
+    '/docs/scalar',
+    apiReference({
+      content: openapiSpec,
+      theme: 'purple',
+    })
+  );
+}
+
+app.use(
+  '/docs',
+  swaggerUi.serve,
+  swaggerUi.setup(openapiSpec, {
+    customSiteTitle: 'EventHub API - Documentacion',
+  })
+);
 
 app.get('/api/health', (req, res) => {
   res.json({
