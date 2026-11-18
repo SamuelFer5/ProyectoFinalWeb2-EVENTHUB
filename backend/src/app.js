@@ -6,6 +6,7 @@ const HttpError = require('./utils/HttpError');
 const requestLogger = require('./middlewares/requestLogger');
 const { apiLimiter } = require('./middlewares/rateLimiter');
 const { notFound, errorHandler } = require('./middlewares/errorHandler');
+const authRoutes = require('./routes/authRoutes');
 
 const app = express();
 
@@ -36,6 +37,8 @@ app.get('/api/health', (req, res) => {
     timestamp: new Date().toISOString(),
   });
 });
+
+app.use('/api/auth', authRoutes);
 
 app.use(notFound);
 app.use(errorHandler);
